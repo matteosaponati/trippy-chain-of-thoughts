@@ -1,0 +1,5 @@
+Metadata-Version: 2.1
+Name: trippy-chain-of-thoughts
+Version: 0.1.0
+Summary: A package for running trial experiments and making an LLM trip like hell
+Requires-Python: >=3.11
