@@ -1,0 +1,1 @@
+# trippy-chain-of-thoughts
