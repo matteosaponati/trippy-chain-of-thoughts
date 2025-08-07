@@ -1,6 +1,9 @@
 #!/bin/bash
 
-export CUDA_VISIBLE_DEVICES = 0  
+source ~/miniconda3/etc/profile.d/conda.sh
+conda activate trippy-cot
+
+export CUDA_VISIBLE_DEVICES=0  
 
 LOG_DIR="./logs"
 mkdir -p "$LOG_DIR"
