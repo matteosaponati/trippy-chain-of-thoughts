@@ -10,13 +10,13 @@ def main():
     ap.add_argument("--mode", 
                     type = str, 
                     choices = ["single", "iter"], default = "single")
-    ap.add_argument("--limit", type = int, default = 1)
+    ap.add_argument("--limit", type = int, default = 8000)
     ap.add_argument("--dataset", type = str, default = "gsm8k")
     ap.add_argument("--load_in_8bit", type = bool, default = False)
-    ap.add_argument("--max_new_tokens", type = int, default = 384)
+    ap.add_argument("--batch_size", type=int, default = 4)
+    ap.add_argument("--max_new_tokens", type = int, default = 256)
     ap.add_argument("--temperature", type = float, default = 0.9)
     ap.add_argument("--top_p", type = float, default = 0.9)
-    ap.add_argument("--top_k", type = int, default = None)
     ap.add_argument("--n", type = int, default = 1)
     ap.add_argument("--stop_sequences", type = str, nargs = "*", default = None) 
     ap.add_argument("--repetition_penalty", type = float, default = 1.0)
@@ -32,13 +32,12 @@ def main():
             max_new_tokens = args.max_new_tokens,
             temperature = args.temperature,
             top_p = args.top_p,
-            top_k = args.top_k,
             n = args.n,
             stop_sequences = args.stop_sequences,
             repetition_penalty = args.repetition_penalty)
     teacher.synthesize(dataset = dataset,
                        out_path = args.out_path,
-                       limit = args.limit)
+                       batch_size = args.batch_size)
     
 if __name__ == "__main__":
     main()

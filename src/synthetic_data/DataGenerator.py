@@ -21,8 +21,7 @@ class DataGenerator:
             max_new_tokens: int = 384,
             temperature: float = 0.9,
             top_p: float = 0.9,
-            top_k: Optional[int] = None,
-            n: int = 1,
+            n: int = 3,
             stop_sequences: Optional[List[str]] = None,
             repetition_penalty: float = 1.0):
 
@@ -31,7 +30,6 @@ class DataGenerator:
         self.max_new_tokens = max_new_tokens
         self.temperature = temperature
         self.top_p = top_p
-        self.top_k = top_k
         self.n = n
         self.stop_sequences = stop_sequences
         self.repetition_penalty = repetition_penalty
@@ -75,18 +73,14 @@ class DataGenerator:
         best_len = -1
         for i, text in enumerate(outputs):
             trip, final = parse_output(text or "")
-            logger.info(f"output {i}: {text[:100]}...") 
-            logger.info(f"parsed trip: {trip[:50] if trip else None}...")
-            logger.info(f"parsed final: {final}")
-            logger.info(f"trip length: {len(trip) if trip else 0}")
             if not (trip and final): 
-                logger.info("failed: missing trip or final")
+                # logger.info("failed: missing trip or final")
                 continue
             if not length_ok(trip): 
-                logger.info("failed: length check")
+                # logger.info("failed: length check")
                 continue
             if not is_correct(gold_answer, final): 
-                logger.info("failed: incorrect answer")
+                # logger.info("failed: incorrect answer")
                 continue
             L = len(trip)
             if L > best_len:
@@ -103,16 +97,18 @@ class DataGenerator:
         
     @torch.inference_mode()
     def generate(self, 
-                 messages: List[Dict]) -> List[str]:
+                 questions_batch: List[Dict]) -> List[str]:
         """Generate responses from the model."""
-        if not messages:
-            raise ValueError("Messages list cannot be empty")
-    
-        prompt = self._to_chat(messages)
+
+        messages_batch = [self._to_messages(q) for q in questions_batch]
+        prompts = [self._to_chat(messages) for messages in messages_batch]
+        all_prompts = []
+        for prompt in prompts:
+            all_prompts.extend([prompt] * self.n)
+
         if self.tokenizer.pad_token is None: self.tokenizer.pad_token = self.tokenizer.eos_token
-        
         inputs = self.tokenizer(
-            [prompt] * self.n, 
+            all_prompts, 
             return_tensors = "pt", 
             padding = True, 
             truncation = True,
@@ -126,14 +122,13 @@ class DataGenerator:
                     temperature = self.temperature if self.temperature > 0 else None,
                     top_p = self.top_p if self.temperature > 0 else None,
                     max_new_tokens = self.max_new_tokens,
-                    repetition_penalty = self.repetition_penalty,
-                    top_k = self.top_k)
+                    repetition_penalty = self.repetition_penalty)
 
         generated_tokens = outputs[:, input_token_length:]
         texts = self.tokenizer.batch_decode(generated_tokens, 
                     skip_special_tokens = True)
         
-        results = []
+        processed_texts = []
         for text in texts:
             generated = text.strip()
             if self.stop_sequences:
@@ -141,34 +136,56 @@ class DataGenerator:
                     if stop_seq in generated:
                         generated = generated.split(stop_seq)[0].strip()
                         break
-            results.append(generated)
+            processed_texts.append(generated)
+
+        results = []
+        for i in range(len(questions_batch)):
+            start_idx = i * self.n
+            end_idx = start_idx + self.n
+            results.append(processed_texts[start_idx:end_idx])
 
         return results
     
     def synthesize(self, dataset, 
                 out_path, 
-                limit = None):
+                limit = None,
+                batch_size = 4):
 
         kept = 0
         total = len(dataset) if not limit else min(limit, len(dataset))
-        logger.info(f"starting synthesis: target={total} items")
+        logger.info(f"starting synthesis: target={total} items, batch_size={batch_size}")
+
         with open(out_path, "w", encoding = "utf-8") as f:
+            
+            idx = 0 
+            idx_range = len(range(0, len(dataset), batch_size))
+            for batch_start in range(0, len(dataset), batch_size):
 
-            for j, ex in enumerate(dataset):
+                logger.info(f" batch # {idx} out of {idx_range}")
 
-                if kept >= limit: break
+                batch_end = min(batch_start + batch_size, len(dataset))
+                if limit:
+                    batch_end = min(batch_end, batch_start + (limit - kept))
+                current_batch = dataset[batch_start:batch_end]
+                questions = [ex["question"] for ex in current_batch]
+                logger.info(f"processing batch {batch_start // batch_size + 1} ({len(current_batch)} items)")
 
-                logger.info(f"[{kept+1}/{total}] processing example ID = {ex.get('uid', j)}")
-                messages = self._to_messages(ex["question"])
-                results = self.generate(messages)
-                best_results = self._pick_best(results, ex["gold_answer"])
-                if not best_results: 
-                    logger.warning(f"no valid output for example ID = {ex.get('uid', j)}. skipping.")
-                    continue
+                batch_results = self.generate(questions)
                 
-                item = self._to_wrapped_data(best_results, ex)
-                f.write(json.dumps(item, ensure_ascii = False) + "\n")
-                kept += 1
+                for ex, results in zip(current_batch, batch_results):
+
+                    # if kept >= limit:
+                    #     break    
+                    # logger.info(f"[{kept+1}/{total}] processing example ID = {ex.get('uid', batch_start)}")
+
+                    best_results = self._pick_best(results, ex["gold_answer"])
+                    if not best_results:
+                        logger.warning(f"no valid output for example ID = {ex.get('uid', batch_start)}. skipping.")
+                        continue
+                    
+                    item = self._to_wrapped_data(best_results, ex)
+                    f.write(json.dumps(item, ensure_ascii=False) + "\n")
+                    kept += 1
 
         logger.info(f"synthesis complete. Kept {kept} items → saved to {out_path}")
     
