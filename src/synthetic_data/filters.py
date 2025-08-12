@@ -1,14 +1,24 @@
 # filters.py
 import re, math
+import logging
 
-TRIP_RE = re.compile(r"<trip>(.*?)</trip>", re.S | re.I)
-FINAL_RE = re.compile(r"Final:\s*(.+)$", re.M | re.I)
+logger = logging.getLogger(__name__)
+
+TRIP_RE = re.compile(r"<trip>\s*(.*?)\s*</trip>", re.DOTALL | re.IGNORECASE)
+FINAL_RE = re.compile(r"Final:\s*(.+?)(?:\n|$)", re.MULTILINE | re.IGNORECASE)
 
 def parse_output(text: str):
-    trip = TRIP_RE.search(text)
-    final = FINAL_RE.search(text)
-    return (trip.group(1).strip() if trip else None,
-            final.group(1).strip() if final else None)
+    """parse the output to extract trip and final answer."""
+    if not text:
+        return None, None
+    
+    trip_match = TRIP_RE.search(text)
+    final_match = FINAL_RE.search(text)
+    
+    trip = trip_match.group(1).strip() if trip_match else None
+    final = final_match.group(1).strip() if final_match else None
+    
+    return trip, final
 
 def normalize_answer(s: str):
     s = s.strip()
@@ -24,5 +34,5 @@ def is_correct(gold: str, pred: str) -> bool:
         # text/MCQ exact compare (case-insensitive)
         return g.lower() == p.lower()
 
-def length_ok(trip: str, min_c = 60, max_c = 900) -> bool:
+def length_ok(trip: str, min_c = 30, max_c = 900) -> bool:
     return trip is not None and min_c <= len(trip) <= max_c
