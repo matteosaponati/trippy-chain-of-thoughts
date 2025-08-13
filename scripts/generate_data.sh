@@ -5,18 +5,17 @@ conda activate trippy-cot
 
 echo "HuggingFace access token:"
 read -s HUGGING_FACE_HUB_TOKEN
-
 if [ -z "$HUGGING_FACE_HUB_TOKEN" ]; then
     echo "no token entered, exiting."
     exit 1
 fi
 huggingface-cli login --token "$HUGGING_FACE_HUB_TOKEN"
 
-GPU="${GPU:-1}"                                    
-MODEL="${MODEL:-meta-llama/Meta-Llama-3-8B-Instruct}"                  
+GPU="${GPU:-2}"                                    
+MODEL="${MODEL:-meta-llama/Llama-3.2-3B-Instruct}"                  
 n="${n:-3}"                                        
-MAX_NEW="${MAX_NEW:-384}"
-TEMP="${TEMP:-0.9}"
+MAX_NEW="${MAX_NEW:-256}"
+TEMP="${TEMP:-0.5}"
 TOP_P="${TOP_P:-0.9}"                        
 LOAD8BIT="${LOAD8BIT:-1}"                                             
 DTYPE="${DTYPE:-auto}"                              
