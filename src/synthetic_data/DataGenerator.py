@@ -1,6 +1,7 @@
 from typing import List, Dict, Optional
 import json
 import torch
+import time
 from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
 import logging
 
@@ -39,25 +40,26 @@ class DataGenerator:
                 model_name, 
                 use_fast = True,
                 trust_remote_code = trust_remote_code)
-        logger.info(f"tokenizer loaded. Vocab size: {self.tokenizer.vocab_size}")
+        logger.info(f"tokenizer loaded with vocab size: {self.tokenizer.vocab_size}")
         
         logger.info(f"loading model {model_name}")
         model_kwargs = {
             "trust_remote_code": trust_remote_code,
             "device_map": "auto",
             "low_cpu_mem_usage": True}
+
         if load_in_8bit:
             logger.info("loading model in **8-bit quantized mode** (bitsandbytes)")
             quant_config = BitsAndBytesConfig(
-                load_in_8bit = True
-            )
+                load_in_8bit = True)                
             model_kwargs["quantization_config"] = quant_config
+
         self.model = AutoModelForCausalLM.from_pretrained(model_name, **model_kwargs)
         logger.info(f"model loaded successfully on device(s): {self.model.device if hasattr(self.model, 'device') else 'multiple'}")
     
     def _to_messages(self, question: str):
-        return [
-            {"role":"system", "content": SYSTEM_PROMPT},
+        """Convert a question string into a list of messages in chat format."""
+        return [{"role":"system", "content": SYSTEM_PROMPT},
             {"role":"user", "content": USER_TEMPLATE.format(question = question)}]
     
     def _to_chat(self, messages: List[Dict]) -> str:
@@ -73,20 +75,14 @@ class DataGenerator:
         best_len = -1
         for i, text in enumerate(outputs):
             trip, final = parse_output(text or "")
-            if not (trip and final): 
-                # logger.info("failed: missing trip or final")
-                continue
-            if not length_ok(trip): 
-                # logger.info("failed: length check")
-                continue
-            if not is_correct(gold_answer, final): 
-                # logger.info("failed: incorrect answer")
-                continue
+            if not (trip and final): continue
+            if not length_ok(trip): continue
+            if not is_correct(gold_answer, final): continue
             L = len(trip)
             if L > best_len:
                 best_len = L
                 best = (trip, final, text)
-            return best
+        return best
     
     def _to_wrapped_data(self, results, ex):
         trip, final, _ = results
@@ -96,12 +92,14 @@ class DataGenerator:
                 "meta":{"source": "gsm8k", "id": ex["uid"], "task_type": ex["task_type"]}}
         
     @torch.inference_mode()
-    def generate(self, 
-                 questions_batch: List[Dict]) -> List[str]:
+    def generate(self, questions_batch: List[Dict]) -> List[str]:
         """Generate responses from the model."""
+
+        generation_start = time.time()
 
         messages_batch = [self._to_messages(q) for q in questions_batch]
         prompts = [self._to_chat(messages) for messages in messages_batch]
+
         all_prompts = []
         for prompt in prompts:
             all_prompts.extend([prompt] * self.n)
@@ -114,8 +112,6 @@ class DataGenerator:
             truncation = True,
             max_length = self.model.config.max_position_embeddings - self.max_new_tokens
             ).to(self.model.device)
-
-        input_token_length = inputs['input_ids'].shape[-1]
     
         outputs = self.model.generate(**inputs,
                     do_sample = self.temperature > 0,
@@ -124,6 +120,7 @@ class DataGenerator:
                     max_new_tokens = self.max_new_tokens,
                     repetition_penalty = self.repetition_penalty)
 
+        input_token_length = inputs['input_ids'].shape[-1]
         generated_tokens = outputs[:, input_token_length:]
         texts = self.tokenizer.batch_decode(generated_tokens, 
                     skip_special_tokens = True)
@@ -144,6 +141,12 @@ class DataGenerator:
             end_idx = start_idx + self.n
             results.append(processed_texts[start_idx:end_idx])
 
+        del inputs, outputs, generated_tokens
+        
+        total_generation_time = time.time() - generation_start
+        logger.info(f"total generation: {total_generation_time:.3f}s")
+        logger.info(f"generation rate: {len(all_prompts) / total_generation_time:.2f} prompts/sec")
+
         return results
     
     def synthesize(self, dataset, 
@@ -157,37 +160,37 @@ class DataGenerator:
 
         with open(out_path, "w", encoding = "utf-8") as f:
             
-            idx = 0 
             idx_range = len(range(0, len(dataset), batch_size))
             for batch_start in range(0, len(dataset), batch_size):
 
-                logger.info(f" batch # {idx} out of {idx_range}")
+                batch_start_time = time.time()
 
                 batch_end = min(batch_start + batch_size, len(dataset))
                 if limit:
                     batch_end = min(batch_end, batch_start + (limit - kept))
                 current_batch = dataset[batch_start:batch_end]
                 questions = [ex["question"] for ex in current_batch]
-                logger.info(f"processing batch {batch_start // batch_size + 1} ({len(current_batch)} items)")
+                logger.info(f"processing batch {batch_start // batch_size + 1} out of {idx_range} ({len(current_batch)} items)")
 
                 batch_results = self.generate(questions)
                 
+                batch_kept = 0
                 for ex, results in zip(current_batch, batch_results):
 
-                    # if kept >= limit:
-                    #     break    
-                    # logger.info(f"[{kept+1}/{total}] processing example ID = {ex.get('uid', batch_start)}")
-
                     best_results = self._pick_best(results, ex["gold_answer"])
-                    if not best_results:
-                        logger.warning(f"no valid output for example ID = {ex.get('uid', batch_start)}. skipping.")
-                        continue
-                    
+                    if not best_results: continue
                     item = self._to_wrapped_data(best_results, ex)
                     f.write(json.dumps(item, ensure_ascii=False) + "\n")
                     kept += 1
+                    batch_kept += 1
+
+                batch_time = time.time() - batch_start_time
+                logger.info(f"total time: {batch_time / 60:.2f} minutes")
+                logger.info(f"success rate: {100 * batch_kept / len(current_batch):.1f}%")
+                logger.info(f"progress: {kept}/{total} total items kept")
 
         logger.info(f"synthesis complete. Kept {kept} items → saved to {out_path}")
+        logger.info(f"overall success rate: {100 * kept / total:.1f}%")
     
     def get_model_info(self) -> Dict:
         """Get information about the loaded model."""
