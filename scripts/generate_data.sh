@@ -11,7 +11,7 @@ if [ -z "$HUGGING_FACE_HUB_TOKEN" ]; then
 fi
 huggingface-cli login --token "$HUGGING_FACE_HUB_TOKEN"
 
-GPU="${GPU:-2}"                                    
+GPU="${GPU:-3}"                                    
 MODEL="${MODEL:-meta-llama/Llama-3.2-3B-Instruct}"                  
 n="${n:-3}"                                        
 MAX_NEW="${MAX_NEW:-256}"
