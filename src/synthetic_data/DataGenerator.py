@@ -5,8 +5,7 @@ import time
 from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
 import logging
 
-from src.synthetic_data.prompts import SYSTEM_PROMPT, USER_TEMPLATE
-from src.synthetic_data.filters import parse_output, is_correct, length_ok
+from src.synthetic_data.filters import is_parsed, is_correct, is_length
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO, format="[%(asctime)s] %(levelname)s - %(message)s")
@@ -16,6 +15,7 @@ class DataGenerator:
     def __init__(
             self,
             model_name: str = "meta-llama/Meta-Llama-3-8B-Instruct",
+            dataset_name: str = "gsm8k",
             torch_dtype: Optional[torch.dtype] = None,
             trust_remote_code: bool = False,
             load_in_8bit: bool = False,
@@ -27,6 +27,7 @@ class DataGenerator:
             repetition_penalty: float = 1.0):
 
         self.model_name = model_name
+        self.dataset_name = dataset_name
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
         self.max_new_tokens = max_new_tokens
         self.temperature = temperature
@@ -41,6 +42,7 @@ class DataGenerator:
                 use_fast = True,
                 trust_remote_code = trust_remote_code)
         logger.info(f"tokenizer loaded with vocab size: {self.tokenizer.vocab_size}")
+        if self.tokenizer.pad_token is None: self.tokenizer.pad_token = self.tokenizer.eos_token
         
         logger.info(f"loading model {model_name}")
         model_kwargs = {
@@ -56,11 +58,16 @@ class DataGenerator:
 
         self.model = AutoModelForCausalLM.from_pretrained(model_name, **model_kwargs)
         logger.info(f"model loaded successfully on device(s): {self.model.device if hasattr(self.model, 'device') else 'multiple'}")
-    
-    def _to_messages(self, question: str):
+
+        if self.mode == 'boring':
+            from src.synthetic_data.prompts_boring import SYSTEM_PROMPT, USER_TEMPLATE
+        elif self.mode == 'trippy':
+            from src.synthetic_data.prompts_trippy import SYSTEM_PROMPT, USER_TEMPLATE
+
+    def _to_messages(self, question: str, answer: str) -> List[Dict]:
         """Convert a question string into a list of messages in chat format."""
         return [{"role":"system", "content": SYSTEM_PROMPT},
-            {"role":"user", "content": USER_TEMPLATE.format(question = question)}]
+            {"role":"user", "content": USER_TEMPLATE.format(question = question, answer = answer)}]
     
     def _to_chat(self, messages: List[Dict]) -> str:
         """Takes a list of dictionary (each representing a prompt in chat format)
@@ -69,42 +76,55 @@ class DataGenerator:
             messages, 
             tokenize = False, 
             add_generation_prompt = True)
-    
-    def _pick_best(self, outputs, gold_answer):
+
+    def _self_consistency(self, outputs: List[str], 
+                            gold_answer: str) -> Optional[tuple]:
+        """Select the best output based on self-consistency."""
+        if not outputs or not gold_answer:
+            return None
+
         best = None
-        best_len = -1
-        for i, text in enumerate(outputs):
-            trip, final = parse_output(text or "")
-            if not (trip and final): continue
-            if not length_ok(trip): continue
-            if not is_correct(gold_answer, final): continue
-            L = len(trip)
-            if L > best_len:
-                best_len = L
-                best = (trip, final, text)
-        return best
+        best_score = float("-inf")
+
+        for i, text in enumerate(outputs or []):
+            
+            trip_before, answer, end = is_parsed(text or "")
+            if not (trip_before and answer and end):
+                continue
+            if not is_length(trip_before): 
+                continue
+            if not is_length(end): 
+                continue
+            if not is_correct(gold_answer, answer): 
+                continue
+            
+            score = len(trip_before) + 0.5 * len(end)
+            if score > best_score:
+                best_score = score
+                best = (trip_before, answer, end, text)
     
-    def _to_wrapped_data(self, results, ex):
-        trip, final, _ = results
-        return {"messages":[
-                {"role":"user", "content": f"<problem>\n{ex['question']}\n</problem>"},
-                {"role":"assistant", "content": f"<trip>{trip}</trip>\nFinal: {final}"}],
-                "meta":{"source": "gsm8k", "id": ex["uid"], "task_type": ex["task_type"]}}
+        return best
+
+    def _to_wrapped_data(self, results, ex, dataset_name):
+        trip_before, answer, end = results[:3]
+        return {"messages": [{"role": "user","content": f"<problem>\n{ex['question']}\n</problem>"},
+            {"role": "assistant","content": (f"<trip_before>{trip_before}</trip_before>\n"
+                f"<answer>{answer}</answer>\n"f"<end>{end}</end>")}],
+            "meta": {"source": dataset_name, "id": ex["uid"], "task_type": ex["task_type"]}}
         
     @torch.inference_mode()
-    def generate(self, questions_batch: List[Dict]) -> List[str]:
+    def generate(self, questions_batch: List[Dict], answers_batch: List[Dict]) -> List[str]:
         """Generate responses from the model."""
 
         generation_start = time.time()
 
-        messages_batch = [self._to_messages(q) for q in questions_batch]
+        messages_batch = [self._to_messages(q, a) for q, a in zip(questions_batch, answers_batch)]
         prompts = [self._to_chat(messages) for messages in messages_batch]
 
         all_prompts = []
         for prompt in prompts:
             all_prompts.extend([prompt] * self.n)
 
-        if self.tokenizer.pad_token is None: self.tokenizer.pad_token = self.tokenizer.eos_token
         inputs = self.tokenizer(
             all_prompts, 
             return_tensors = "pt", 
@@ -170,16 +190,17 @@ class DataGenerator:
                     batch_end = min(batch_end, batch_start + (limit - kept))
                 current_batch = dataset[batch_start:batch_end]
                 questions = [ex["question"] for ex in current_batch]
+                answers = [ex["gold_answer"] for ex in current_batch]
                 logger.info(f"processing batch {batch_start // batch_size + 1} out of {idx_range} ({len(current_batch)} items)")
 
-                batch_results = self.generate(questions)
+                batch_results = self.generate(questions, answers)
                 
                 batch_kept = 0
                 for ex, results in zip(current_batch, batch_results):
 
-                    best_results = self._pick_best(results, ex["gold_answer"])
+                    best_results = self._self_consistency(results, ex["gold_answer"])
                     if not best_results: continue
-                    item = self._to_wrapped_data(best_results, ex)
+                    item = self._to_wrapped_data(best_results, ex, self.dataset_name)
                     f.write(json.dumps(item, ensure_ascii=False) + "\n")
                     kept += 1
                     batch_kept += 1
