@@ -9,9 +9,10 @@ def main():
                     default = "meta-llama/Llama-3.2-3B-Instruct")
     ap.add_argument("--mode", 
                     type = str, 
-                    default = "trippy")
+                    default = "boring")    
     ap.add_argument("--limit", type = int, default = 8000)
     ap.add_argument("--dataset", type = str, default = "gsm8k")
+    ap.add_argument("--dataset_mode", type = str, default = "test")
     ap.add_argument("--load_in_8bit", type = bool, default = False)
     ap.add_argument("--batch_size", type=int, default = 18)
     ap.add_argument("--max_new_tokens", type = int, default = 256)
@@ -22,14 +23,21 @@ def main():
     ap.add_argument("--repetition_penalty", type = float, default = 1.0)
     ap.add_argument("--torch_dtype", type = str, default = "auto")
     args = ap.parse_args()
-    args.out_path = f"../datasets/{args.dataset}-{args.mode}"
+    args.out_path = f"../datasets/{args.dataset}-{args.mode}-{args.dataset_mode}"
 
-    dataset = list(iter_gsm8k(split = "train"))
+    ## load dataset to wrap 
+    if args.dataset == "gsm8k":
+        from src.synthetic_data.adapters import iter_gsm8k
+        dataset = list(iter_gsm8k(split = args.dataset_mode))
+    elif args.dataset == "math":
+        from src.synthetic_data.adapters import iter_math
+        dataset = list(iter_math(split = args.dataset_mode))
     
     ## create data generator
     teacher = DataGenerator(
             model_name = args.model,
             dataset_name = args.dataset,
+            mode = args.mode,
             torch_dtype = args.torch_dtype,
             load_in_8bit = args.load_in_8bit,
             max_new_tokens = args.max_new_tokens,
