@@ -16,6 +16,7 @@ class DataGenerator:
             self,
             model_name: str = "meta-llama/Meta-Llama-3-8B-Instruct",
             dataset_name: str = "gsm8k",
+            mode: str = "boring",
             torch_dtype: Optional[torch.dtype] = None,
             trust_remote_code: bool = False,
             load_in_8bit: bool = False,
@@ -28,6 +29,7 @@ class DataGenerator:
 
         self.model_name = model_name
         self.dataset_name = dataset_name
+        self.mode = mode
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
         self.max_new_tokens = max_new_tokens
         self.temperature = temperature
@@ -60,14 +62,16 @@ class DataGenerator:
         logger.info(f"model loaded successfully on device(s): {self.model.device if hasattr(self.model, 'device') else 'multiple'}")
 
         if self.mode == 'boring':
-            from src.synthetic_data.prompts_boring import SYSTEM_PROMPT, USER_TEMPLATE
+            from src.prompts.prompts_boring import SYSTEM_PROMPT, USER_TEMPLATE
         elif self.mode == 'trippy':
-            from src.synthetic_data.prompts_trippy import SYSTEM_PROMPT, USER_TEMPLATE
+            from src.prompts.prompts_trippy import SYSTEM_PROMPT, USER_TEMPLATE
+        self.SYSTEM_PROMPT = SYSTEM_PROMPT
+        self.USER_TEMPLATE = USER_TEMPLATE
 
     def _to_messages(self, question: str, answer: str) -> List[Dict]:
         """Convert a question string into a list of messages in chat format."""
-        return [{"role":"system", "content": SYSTEM_PROMPT},
-            {"role":"user", "content": USER_TEMPLATE.format(question = question, answer = answer)}]
+        return [{"role":"system", "content": self.SYSTEM_PROMPT},
+            {"role":"user", "content": self.USER_TEMPLATE.format(question = question, answer = answer)}]
     
     def _to_chat(self, messages: List[Dict]) -> str:
         """Takes a list of dictionary (each representing a prompt in chat format)
