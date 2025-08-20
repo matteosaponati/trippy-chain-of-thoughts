@@ -1,7 +1,0 @@
-README.md
-setup.py
-src/__init__.py
-trippy_chain_of_thoughts.egg-info/PKG-INFO
-trippy_chain_of_thoughts.egg-info/SOURCES.txt
-trippy_chain_of_thoughts.egg-info/dependency_links.txt
-trippy_chain_of_thoughts.egg-info/top_level.txt
