@@ -56,7 +56,7 @@ class GeneratorTeacherModel:
         ## set mode 
         if self.mode == 'boring': from src.prompts.prompts_boring import SYSTEM_PROMPT, USER_TEMPLATE
         elif self.mode == 'trippy': from src.prompts.prompts_trippy import SYSTEM_PROMPT, USER_TEMPLATE
-        elif self.mode == 'evaluate': from src.prompts.prompts_evaluate import SYSTEM_PROMPT, USER_TEMPLATE
+        elif self.mode == 'evaluate': from src.prompts.prompts_default import SYSTEM_PROMPT, USER_TEMPLATE
         self.SYSTEM_PROMPT = SYSTEM_PROMPT
         self.USER_TEMPLATE = USER_TEMPLATE
 
