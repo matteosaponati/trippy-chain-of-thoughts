@@ -1,0 +1,451 @@
+[2025-08-20 11:48:36,253] INFO - loading tokenizer for meta-llama/Llama-3.2-3B-Instruct
+[2025-08-20 11:48:37,366] INFO - loading model meta-llama/Llama-3.2-3B-Instruct - 8-bit quantization? True
+[2025-08-20 11:48:39,176] INFO - We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:05<00:05,  5.73s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:07<00:00,  3.49s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:07<00:00,  3.83s/it]
+[2025-08-20 11:48:47,118] INFO - model loaded successfully on device(s): cuda:0
+[2025-08-20 11:48:47,118] INFO - evaluating meta-llama/Llama-3.2-3B-Instruct on gsm8k - # problems: 1319
+[2025-08-20 11:48:47,119] INFO - processing batch 1 out of 74
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+[2025-08-20 11:49:27,780] INFO - total generation: 40.661s
+[2025-08-20 11:49:27,780] INFO - generation rate: 1.33 prompts/sec
+[2025-08-20 11:49:27,784] INFO - total time: 0.68 minutes
+[2025-08-20 11:49:27,784] INFO - accuracy on batch: 38.9%
+[2025-08-20 11:49:27,784] INFO - processing batch 2 out of 74
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+[2025-08-20 11:50:05,700] INFO - total generation: 37.916s
+[2025-08-20 11:50:05,700] INFO - generation rate: 1.42 prompts/sec
+[2025-08-20 11:50:05,703] INFO - total time: 0.63 minutes
+[2025-08-20 11:50:05,703] INFO - accuracy on batch: 44.4%
+[2025-08-20 11:50:05,703] INFO - processing batch 3 out of 74
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+[2025-08-20 11:50:46,004] INFO - total generation: 40.301s
+[2025-08-20 11:50:46,004] INFO - generation rate: 1.34 prompts/sec
+[2025-08-20 11:50:46,007] INFO - total time: 0.67 minutes
+[2025-08-20 11:50:46,007] INFO - accuracy on batch: 38.9%
+[2025-08-20 11:50:46,007] INFO - processing batch 4 out of 74
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+[2025-08-20 11:51:24,052] INFO - total generation: 38.045s
+[2025-08-20 11:51:24,052] INFO - generation rate: 1.42 prompts/sec
+[2025-08-20 11:51:24,055] INFO - total time: 0.63 minutes
+[2025-08-20 11:51:24,055] INFO - accuracy on batch: 61.1%
+[2025-08-20 11:51:24,055] INFO - processing batch 5 out of 74
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+[2025-08-20 11:52:03,118] INFO - total generation: 39.062s
+[2025-08-20 11:52:03,118] INFO - generation rate: 1.38 prompts/sec
+[2025-08-20 11:52:03,121] INFO - total time: 0.65 minutes
+[2025-08-20 11:52:03,121] INFO - accuracy on batch: 66.7%
+[2025-08-20 11:52:03,121] INFO - processing batch 6 out of 74
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+[2025-08-20 11:52:41,818] INFO - total generation: 38.697s
+[2025-08-20 11:52:41,818] INFO - generation rate: 1.40 prompts/sec
+[2025-08-20 11:52:41,821] INFO - total time: 0.64 minutes
+[2025-08-20 11:52:41,821] INFO - accuracy on batch: 38.9%
+[2025-08-20 11:52:41,821] INFO - processing batch 7 out of 74
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+[2025-08-20 11:53:20,470] INFO - total generation: 38.649s
+[2025-08-20 11:53:20,470] INFO - generation rate: 1.40 prompts/sec
+[2025-08-20 11:53:20,473] INFO - total time: 0.64 minutes
+[2025-08-20 11:53:20,473] INFO - accuracy on batch: 44.4%
+[2025-08-20 11:53:20,473] INFO - processing batch 8 out of 74
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+[2025-08-20 11:53:57,726] INFO - total generation: 37.253s
+[2025-08-20 11:53:57,726] INFO - generation rate: 1.45 prompts/sec
+[2025-08-20 11:53:57,729] INFO - total time: 0.62 minutes
+[2025-08-20 11:53:57,729] INFO - accuracy on batch: 50.0%
+[2025-08-20 11:53:57,729] INFO - processing batch 9 out of 74
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+[2025-08-20 11:54:36,986] INFO - total generation: 39.257s
+[2025-08-20 11:54:36,986] INFO - generation rate: 1.38 prompts/sec
+[2025-08-20 11:54:36,989] INFO - total time: 0.65 minutes
+[2025-08-20 11:54:36,989] INFO - accuracy on batch: 27.8%
+[2025-08-20 11:54:36,989] INFO - processing batch 10 out of 74
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+[2025-08-20 11:55:15,356] INFO - total generation: 38.367s
+[2025-08-20 11:55:15,356] INFO - generation rate: 1.41 prompts/sec
+[2025-08-20 11:55:15,359] INFO - total time: 0.64 minutes
+[2025-08-20 11:55:15,359] INFO - accuracy on batch: 38.9%
+[2025-08-20 11:55:15,359] INFO - processing batch 11 out of 74
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+[2025-08-20 11:55:54,411] INFO - total generation: 39.051s
+[2025-08-20 11:55:54,411] INFO - generation rate: 1.38 prompts/sec
+[2025-08-20 11:55:54,413] INFO - total time: 0.65 minutes
+[2025-08-20 11:55:54,413] INFO - accuracy on batch: 38.9%
+[2025-08-20 11:55:54,414] INFO - processing batch 12 out of 74
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+[2025-08-20 11:56:32,411] INFO - total generation: 37.997s
+[2025-08-20 11:56:32,411] INFO - generation rate: 1.42 prompts/sec
+[2025-08-20 11:56:32,414] INFO - total time: 0.63 minutes
+[2025-08-20 11:56:32,414] INFO - accuracy on batch: 44.4%
+[2025-08-20 11:56:32,414] INFO - processing batch 13 out of 74
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+[2025-08-20 11:57:10,761] INFO - total generation: 38.347s
+[2025-08-20 11:57:10,761] INFO - generation rate: 1.41 prompts/sec
+[2025-08-20 11:57:10,764] INFO - total time: 0.64 minutes
+[2025-08-20 11:57:10,764] INFO - accuracy on batch: 61.1%
+[2025-08-20 11:57:10,764] INFO - processing batch 14 out of 74
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+[2025-08-20 11:57:48,254] INFO - total generation: 37.490s
+[2025-08-20 11:57:48,254] INFO - generation rate: 1.44 prompts/sec
+[2025-08-20 11:57:48,256] INFO - total time: 0.62 minutes
+[2025-08-20 11:57:48,256] INFO - accuracy on batch: 44.4%
+[2025-08-20 11:57:48,257] INFO - processing batch 15 out of 74
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+[2025-08-20 11:58:26,059] INFO - total generation: 37.802s
+[2025-08-20 11:58:26,059] INFO - generation rate: 1.43 prompts/sec
+[2025-08-20 11:58:26,062] INFO - total time: 0.63 minutes
+[2025-08-20 11:58:26,062] INFO - accuracy on batch: 61.1%
+[2025-08-20 11:58:26,062] INFO - processing batch 16 out of 74
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+[2025-08-20 11:59:04,130] INFO - total generation: 38.069s
+[2025-08-20 11:59:04,131] INFO - generation rate: 1.42 prompts/sec
+[2025-08-20 11:59:04,133] INFO - total time: 0.63 minutes
+[2025-08-20 11:59:04,133] INFO - accuracy on batch: 50.0%
+[2025-08-20 11:59:04,133] INFO - processing batch 17 out of 74
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+[2025-08-20 11:59:41,767] INFO - total generation: 37.634s
+[2025-08-20 11:59:41,768] INFO - generation rate: 1.43 prompts/sec
+[2025-08-20 11:59:41,770] INFO - total time: 0.63 minutes
+[2025-08-20 11:59:41,770] INFO - accuracy on batch: 44.4%
+[2025-08-20 11:59:41,770] INFO - processing batch 18 out of 74
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+[2025-08-20 12:00:19,888] INFO - total generation: 38.117s
+[2025-08-20 12:00:19,888] INFO - generation rate: 1.42 prompts/sec
+[2025-08-20 12:00:19,890] INFO - total time: 0.64 minutes
+[2025-08-20 12:00:19,890] INFO - accuracy on batch: 44.4%
+[2025-08-20 12:00:19,890] INFO - processing batch 19 out of 74
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+[2025-08-20 12:00:59,150] INFO - total generation: 39.259s
+[2025-08-20 12:00:59,150] INFO - generation rate: 1.38 prompts/sec
+[2025-08-20 12:00:59,152] INFO - total time: 0.65 minutes
+[2025-08-20 12:00:59,152] INFO - accuracy on batch: 27.8%
+[2025-08-20 12:00:59,152] INFO - processing batch 20 out of 74
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+[2025-08-20 12:01:36,639] INFO - total generation: 37.486s
+[2025-08-20 12:01:36,639] INFO - generation rate: 1.44 prompts/sec
+[2025-08-20 12:01:36,641] INFO - total time: 0.62 minutes
+[2025-08-20 12:01:36,641] INFO - accuracy on batch: 27.8%
+[2025-08-20 12:01:36,641] INFO - processing batch 21 out of 74
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+[2025-08-20 12:02:14,655] INFO - total generation: 38.013s
+[2025-08-20 12:02:14,655] INFO - generation rate: 1.42 prompts/sec
+[2025-08-20 12:02:14,658] INFO - total time: 0.63 minutes
+[2025-08-20 12:02:14,658] INFO - accuracy on batch: 33.3%
+[2025-08-20 12:02:14,658] INFO - processing batch 22 out of 74
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+[2025-08-20 12:02:52,708] INFO - total generation: 38.050s
+[2025-08-20 12:02:52,708] INFO - generation rate: 1.42 prompts/sec
+[2025-08-20 12:02:52,711] INFO - total time: 0.63 minutes
+[2025-08-20 12:02:52,711] INFO - accuracy on batch: 38.9%
+[2025-08-20 12:02:52,711] INFO - processing batch 23 out of 74
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+[2025-08-20 12:03:31,451] INFO - total generation: 38.740s
+[2025-08-20 12:03:31,451] INFO - generation rate: 1.39 prompts/sec
+[2025-08-20 12:03:31,454] INFO - total time: 0.65 minutes
+[2025-08-20 12:03:31,454] INFO - accuracy on batch: 38.9%
+[2025-08-20 12:03:31,454] INFO - processing batch 24 out of 74
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+[2025-08-20 12:04:10,506] INFO - total generation: 39.052s
+[2025-08-20 12:04:10,506] INFO - generation rate: 1.38 prompts/sec
+[2025-08-20 12:04:10,509] INFO - total time: 0.65 minutes
+[2025-08-20 12:04:10,509] INFO - accuracy on batch: 44.4%
+[2025-08-20 12:04:10,509] INFO - processing batch 25 out of 74
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+[2025-08-20 12:04:49,181] INFO - total generation: 38.673s
+[2025-08-20 12:04:49,181] INFO - generation rate: 1.40 prompts/sec
+[2025-08-20 12:04:49,184] INFO - total time: 0.64 minutes
+[2025-08-20 12:04:49,184] INFO - accuracy on batch: 27.8%
+[2025-08-20 12:04:49,184] INFO - processing batch 26 out of 74
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+[2025-08-20 12:05:28,660] INFO - total generation: 39.476s
+[2025-08-20 12:05:28,660] INFO - generation rate: 1.37 prompts/sec
+[2025-08-20 12:05:28,663] INFO - total time: 0.66 minutes
+[2025-08-20 12:05:28,663] INFO - accuracy on batch: 55.6%
+[2025-08-20 12:05:28,663] INFO - processing batch 27 out of 74
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+[2025-08-20 12:06:05,349] INFO - total generation: 36.686s
+[2025-08-20 12:06:05,349] INFO - generation rate: 1.47 prompts/sec
+[2025-08-20 12:06:05,352] INFO - total time: 0.61 minutes
+[2025-08-20 12:06:05,352] INFO - accuracy on batch: 50.0%
+[2025-08-20 12:06:05,352] INFO - processing batch 28 out of 74
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+[2025-08-20 12:06:43,539] INFO - total generation: 38.188s
+[2025-08-20 12:06:43,539] INFO - generation rate: 1.41 prompts/sec
+[2025-08-20 12:06:43,542] INFO - total time: 0.64 minutes
+[2025-08-20 12:06:43,542] INFO - accuracy on batch: 38.9%
+[2025-08-20 12:06:43,542] INFO - processing batch 29 out of 74
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+[2025-08-20 12:07:21,669] INFO - total generation: 38.128s
+[2025-08-20 12:07:21,670] INFO - generation rate: 1.42 prompts/sec
+[2025-08-20 12:07:21,672] INFO - total time: 0.64 minutes
+[2025-08-20 12:07:21,672] INFO - accuracy on batch: 55.6%
+[2025-08-20 12:07:21,672] INFO - processing batch 30 out of 74
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+[2025-08-20 12:07:59,667] INFO - total generation: 37.995s
+[2025-08-20 12:07:59,667] INFO - generation rate: 1.42 prompts/sec
+[2025-08-20 12:07:59,670] INFO - total time: 0.63 minutes
+[2025-08-20 12:07:59,670] INFO - accuracy on batch: 33.3%
+[2025-08-20 12:07:59,670] INFO - processing batch 31 out of 74
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+[2025-08-20 12:08:37,542] INFO - total generation: 37.872s
+[2025-08-20 12:08:37,542] INFO - generation rate: 1.43 prompts/sec
+[2025-08-20 12:08:37,545] INFO - total time: 0.63 minutes
+[2025-08-20 12:08:37,545] INFO - accuracy on batch: 44.4%
+[2025-08-20 12:08:37,545] INFO - processing batch 32 out of 74
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+[2025-08-20 12:09:16,331] INFO - total generation: 38.786s
+[2025-08-20 12:09:16,331] INFO - generation rate: 1.39 prompts/sec
+[2025-08-20 12:09:16,334] INFO - total time: 0.65 minutes
+[2025-08-20 12:09:16,334] INFO - accuracy on batch: 61.1%
+[2025-08-20 12:09:16,334] INFO - processing batch 33 out of 74
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+[2025-08-20 12:09:59,803] INFO - total generation: 43.469s
+[2025-08-20 12:09:59,804] INFO - generation rate: 1.24 prompts/sec
+[2025-08-20 12:09:59,806] INFO - total time: 0.72 minutes
+[2025-08-20 12:09:59,807] INFO - accuracy on batch: 38.9%
+[2025-08-20 12:09:59,807] INFO - processing batch 34 out of 74
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+[2025-08-20 12:10:38,415] INFO - total generation: 38.608s
+[2025-08-20 12:10:38,415] INFO - generation rate: 1.40 prompts/sec
+[2025-08-20 12:10:38,418] INFO - total time: 0.64 minutes
+[2025-08-20 12:10:38,418] INFO - accuracy on batch: 33.3%
+[2025-08-20 12:10:38,418] INFO - processing batch 35 out of 74
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+[2025-08-20 12:11:21,023] INFO - total generation: 42.604s
+[2025-08-20 12:11:21,023] INFO - generation rate: 1.27 prompts/sec
+[2025-08-20 12:11:21,026] INFO - total time: 0.71 minutes
+[2025-08-20 12:11:21,026] INFO - accuracy on batch: 50.0%
+[2025-08-20 12:11:21,026] INFO - processing batch 36 out of 74
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+[2025-08-20 12:12:04,807] INFO - total generation: 43.781s
+[2025-08-20 12:12:04,807] INFO - generation rate: 1.23 prompts/sec
+[2025-08-20 12:12:04,810] INFO - total time: 0.73 minutes
+[2025-08-20 12:12:04,810] INFO - accuracy on batch: 44.4%
+[2025-08-20 12:12:04,810] INFO - processing batch 37 out of 74
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+[2025-08-20 12:12:42,589] INFO - total generation: 37.779s
+[2025-08-20 12:12:42,589] INFO - generation rate: 1.43 prompts/sec
+[2025-08-20 12:12:42,592] INFO - total time: 0.63 minutes
+[2025-08-20 12:12:42,592] INFO - accuracy on batch: 38.9%
+[2025-08-20 12:12:42,592] INFO - processing batch 38 out of 74
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+[2025-08-20 12:13:21,775] INFO - total generation: 39.183s
+[2025-08-20 12:13:21,775] INFO - generation rate: 1.38 prompts/sec
+[2025-08-20 12:13:21,778] INFO - total time: 0.65 minutes
+[2025-08-20 12:13:21,778] INFO - accuracy on batch: 44.4%
+[2025-08-20 12:13:21,778] INFO - processing batch 39 out of 74
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+[2025-08-20 12:14:00,693] INFO - total generation: 38.915s
+[2025-08-20 12:14:00,693] INFO - generation rate: 1.39 prompts/sec
+[2025-08-20 12:14:00,695] INFO - total time: 0.65 minutes
+[2025-08-20 12:14:00,695] INFO - accuracy on batch: 38.9%
+[2025-08-20 12:14:00,695] INFO - processing batch 40 out of 74
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+[2025-08-20 12:14:38,718] INFO - total generation: 38.023s
+[2025-08-20 12:14:38,719] INFO - generation rate: 1.42 prompts/sec
+[2025-08-20 12:14:38,721] INFO - total time: 0.63 minutes
+[2025-08-20 12:14:38,721] INFO - accuracy on batch: 50.0%
+[2025-08-20 12:14:38,721] INFO - processing batch 41 out of 74
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+[2025-08-20 12:15:17,852] INFO - total generation: 39.130s
+[2025-08-20 12:15:17,852] INFO - generation rate: 1.38 prompts/sec
+[2025-08-20 12:15:17,854] INFO - total time: 0.65 minutes
+[2025-08-20 12:15:17,854] INFO - accuracy on batch: 22.2%
+[2025-08-20 12:15:17,854] INFO - processing batch 42 out of 74
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+[2025-08-20 12:15:56,597] INFO - total generation: 38.742s
+[2025-08-20 12:15:56,597] INFO - generation rate: 1.39 prompts/sec
+[2025-08-20 12:15:56,600] INFO - total time: 0.65 minutes
+[2025-08-20 12:15:56,600] INFO - accuracy on batch: 50.0%
+[2025-08-20 12:15:56,600] INFO - processing batch 43 out of 74
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+[2025-08-20 12:16:35,356] INFO - total generation: 38.757s
+[2025-08-20 12:16:35,357] INFO - generation rate: 1.39 prompts/sec
+[2025-08-20 12:16:35,359] INFO - total time: 0.65 minutes
+[2025-08-20 12:16:35,359] INFO - accuracy on batch: 27.8%
+[2025-08-20 12:16:35,359] INFO - processing batch 44 out of 74
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+[2025-08-20 12:17:14,162] INFO - total generation: 38.803s
+[2025-08-20 12:17:14,162] INFO - generation rate: 1.39 prompts/sec
+[2025-08-20 12:17:14,165] INFO - total time: 0.65 minutes
+[2025-08-20 12:17:14,165] INFO - accuracy on batch: 33.3%
+[2025-08-20 12:17:14,165] INFO - processing batch 45 out of 74
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+[2025-08-20 12:17:53,014] INFO - total generation: 38.849s
+[2025-08-20 12:17:53,014] INFO - generation rate: 1.39 prompts/sec
+[2025-08-20 12:17:53,017] INFO - total time: 0.65 minutes
+[2025-08-20 12:17:53,017] INFO - accuracy on batch: 55.6%
+[2025-08-20 12:17:53,017] INFO - processing batch 46 out of 74
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+[2025-08-20 12:18:32,164] INFO - total generation: 39.147s
+[2025-08-20 12:18:32,164] INFO - generation rate: 1.38 prompts/sec
+[2025-08-20 12:18:32,167] INFO - total time: 0.65 minutes
+[2025-08-20 12:18:32,167] INFO - accuracy on batch: 50.0%
+[2025-08-20 12:18:32,167] INFO - processing batch 47 out of 74
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+[2025-08-20 12:19:16,001] INFO - total generation: 43.834s
+[2025-08-20 12:19:16,002] INFO - generation rate: 1.23 prompts/sec
+[2025-08-20 12:19:16,005] INFO - total time: 0.73 minutes
+[2025-08-20 12:19:16,005] INFO - accuracy on batch: 27.8%
+[2025-08-20 12:19:16,005] INFO - processing batch 48 out of 74
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+[2025-08-20 12:19:57,856] INFO - total generation: 41.851s
+[2025-08-20 12:19:57,856] INFO - generation rate: 1.29 prompts/sec
+[2025-08-20 12:19:57,859] INFO - total time: 0.70 minutes
+[2025-08-20 12:19:57,859] INFO - accuracy on batch: 33.3%
+[2025-08-20 12:19:57,859] INFO - processing batch 49 out of 74
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+[2025-08-20 12:20:35,692] INFO - total generation: 37.833s
+[2025-08-20 12:20:35,692] INFO - generation rate: 1.43 prompts/sec
+[2025-08-20 12:20:35,695] INFO - total time: 0.63 minutes
+[2025-08-20 12:20:35,695] INFO - accuracy on batch: 50.0%
+[2025-08-20 12:20:35,695] INFO - processing batch 50 out of 74
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+[2025-08-20 12:21:14,568] INFO - total generation: 38.873s
+[2025-08-20 12:21:14,568] INFO - generation rate: 1.39 prompts/sec
+[2025-08-20 12:21:14,570] INFO - total time: 0.65 minutes
+[2025-08-20 12:21:14,570] INFO - accuracy on batch: 44.4%
+[2025-08-20 12:21:14,570] INFO - processing batch 51 out of 74
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+[2025-08-20 12:21:52,402] INFO - total generation: 37.831s
+[2025-08-20 12:21:52,402] INFO - generation rate: 1.43 prompts/sec
+[2025-08-20 12:21:52,404] INFO - total time: 0.63 minutes
+[2025-08-20 12:21:52,404] INFO - accuracy on batch: 44.4%
+[2025-08-20 12:21:52,404] INFO - processing batch 52 out of 74
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+[2025-08-20 12:22:31,424] INFO - total generation: 39.019s
+[2025-08-20 12:22:31,424] INFO - generation rate: 1.38 prompts/sec
+[2025-08-20 12:22:31,427] INFO - total time: 0.65 minutes
+[2025-08-20 12:22:31,427] INFO - accuracy on batch: 44.4%
+[2025-08-20 12:22:31,427] INFO - processing batch 53 out of 74
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+[2025-08-20 12:23:10,468] INFO - total generation: 39.041s
+[2025-08-20 12:23:10,468] INFO - generation rate: 1.38 prompts/sec
+[2025-08-20 12:23:10,470] INFO - total time: 0.65 minutes
+[2025-08-20 12:23:10,470] INFO - accuracy on batch: 38.9%
+[2025-08-20 12:23:10,471] INFO - processing batch 54 out of 74
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+[2025-08-20 12:23:50,408] INFO - total generation: 39.937s
+[2025-08-20 12:23:50,408] INFO - generation rate: 1.35 prompts/sec
+[2025-08-20 12:23:50,411] INFO - total time: 0.67 minutes
+[2025-08-20 12:23:50,411] INFO - accuracy on batch: 27.8%
+[2025-08-20 12:23:50,411] INFO - processing batch 55 out of 74
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+[2025-08-20 12:24:28,493] INFO - total generation: 38.082s
+[2025-08-20 12:24:28,493] INFO - generation rate: 1.42 prompts/sec
+[2025-08-20 12:24:28,496] INFO - total time: 0.63 minutes
+[2025-08-20 12:24:28,496] INFO - accuracy on batch: 50.0%
+[2025-08-20 12:24:28,496] INFO - processing batch 56 out of 74
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+[2025-08-20 12:25:07,526] INFO - total generation: 39.029s
+[2025-08-20 12:25:07,526] INFO - generation rate: 1.38 prompts/sec
+[2025-08-20 12:25:07,529] INFO - total time: 0.65 minutes
+[2025-08-20 12:25:07,529] INFO - accuracy on batch: 38.9%
+[2025-08-20 12:25:07,529] INFO - processing batch 57 out of 74
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+[2025-08-20 12:25:47,661] INFO - total generation: 40.132s
+[2025-08-20 12:25:47,661] INFO - generation rate: 1.35 prompts/sec
+[2025-08-20 12:25:47,664] INFO - total time: 0.67 minutes
+[2025-08-20 12:25:47,664] INFO - accuracy on batch: 11.1%
+[2025-08-20 12:25:47,664] INFO - processing batch 58 out of 74
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+[2025-08-20 12:26:27,152] INFO - total generation: 39.488s
+[2025-08-20 12:26:27,152] INFO - generation rate: 1.37 prompts/sec
+[2025-08-20 12:26:27,155] INFO - total time: 0.66 minutes
+[2025-08-20 12:26:27,155] INFO - accuracy on batch: 38.9%
+[2025-08-20 12:26:27,155] INFO - processing batch 59 out of 74
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+[2025-08-20 12:27:05,529] INFO - total generation: 38.374s
+[2025-08-20 12:27:05,530] INFO - generation rate: 1.41 prompts/sec
+[2025-08-20 12:27:05,532] INFO - total time: 0.64 minutes
+[2025-08-20 12:27:05,532] INFO - accuracy on batch: 50.0%
+[2025-08-20 12:27:05,532] INFO - processing batch 60 out of 74
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+[2025-08-20 12:27:47,430] INFO - total generation: 41.898s
+[2025-08-20 12:27:47,431] INFO - generation rate: 1.29 prompts/sec
+[2025-08-20 12:27:47,433] INFO - total time: 0.70 minutes
+[2025-08-20 12:27:47,434] INFO - accuracy on batch: 61.1%
+[2025-08-20 12:27:47,434] INFO - processing batch 61 out of 74
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+[2025-08-20 12:28:26,435] INFO - total generation: 39.001s
+[2025-08-20 12:28:26,435] INFO - generation rate: 1.38 prompts/sec
+[2025-08-20 12:28:26,438] INFO - total time: 0.65 minutes
+[2025-08-20 12:28:26,438] INFO - accuracy on batch: 22.2%
+[2025-08-20 12:28:26,438] INFO - processing batch 62 out of 74
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+[2025-08-20 12:29:04,513] INFO - total generation: 38.075s
+[2025-08-20 12:29:04,513] INFO - generation rate: 1.42 prompts/sec
+[2025-08-20 12:29:04,515] INFO - total time: 0.63 minutes
+[2025-08-20 12:29:04,515] INFO - accuracy on batch: 22.2%
+[2025-08-20 12:29:04,516] INFO - processing batch 63 out of 74
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+[2025-08-20 12:29:47,571] INFO - total generation: 43.055s
+[2025-08-20 12:29:47,571] INFO - generation rate: 1.25 prompts/sec
+[2025-08-20 12:29:47,574] INFO - total time: 0.72 minutes
+[2025-08-20 12:29:47,574] INFO - accuracy on batch: 33.3%
+[2025-08-20 12:29:47,574] INFO - processing batch 64 out of 74
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+[2025-08-20 12:30:29,934] INFO - total generation: 42.360s
+[2025-08-20 12:30:29,934] INFO - generation rate: 1.27 prompts/sec
+[2025-08-20 12:30:29,937] INFO - total time: 0.71 minutes
+[2025-08-20 12:30:29,937] INFO - accuracy on batch: 33.3%
+[2025-08-20 12:30:29,937] INFO - processing batch 65 out of 74
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+[2025-08-20 12:31:09,050] INFO - total generation: 39.113s
+[2025-08-20 12:31:09,051] INFO - generation rate: 1.38 prompts/sec
+[2025-08-20 12:31:09,053] INFO - total time: 0.65 minutes
+[2025-08-20 12:31:09,053] INFO - accuracy on batch: 22.2%
+[2025-08-20 12:31:09,053] INFO - processing batch 66 out of 74
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+[2025-08-20 12:31:49,587] INFO - total generation: 40.534s
+[2025-08-20 12:31:49,588] INFO - generation rate: 1.33 prompts/sec
+[2025-08-20 12:31:49,590] INFO - total time: 0.68 minutes
+[2025-08-20 12:31:49,590] INFO - accuracy on batch: 50.0%
+[2025-08-20 12:31:49,590] INFO - processing batch 67 out of 74
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+[2025-08-20 12:32:30,541] INFO - total generation: 40.951s
+[2025-08-20 12:32:30,542] INFO - generation rate: 1.32 prompts/sec
+[2025-08-20 12:32:30,544] INFO - total time: 0.68 minutes
+[2025-08-20 12:32:30,544] INFO - accuracy on batch: 27.8%
+[2025-08-20 12:32:30,544] INFO - processing batch 68 out of 74
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+[2025-08-20 12:33:11,638] INFO - total generation: 41.093s
+[2025-08-20 12:33:11,638] INFO - generation rate: 1.31 prompts/sec
+[2025-08-20 12:33:11,641] INFO - total time: 0.68 minutes
+[2025-08-20 12:33:11,641] INFO - accuracy on batch: 44.4%
+[2025-08-20 12:33:11,641] INFO - processing batch 69 out of 74
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+[2025-08-20 12:33:49,951] INFO - total generation: 38.310s
+[2025-08-20 12:33:49,951] INFO - generation rate: 1.41 prompts/sec
+[2025-08-20 12:33:49,954] INFO - total time: 0.64 minutes
+[2025-08-20 12:33:49,954] INFO - accuracy on batch: 38.9%
+[2025-08-20 12:33:49,954] INFO - processing batch 70 out of 74
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+[2025-08-20 12:34:28,908] INFO - total generation: 38.954s
+[2025-08-20 12:34:28,908] INFO - generation rate: 1.39 prompts/sec
+[2025-08-20 12:34:28,911] INFO - total time: 0.65 minutes
+[2025-08-20 12:34:28,911] INFO - accuracy on batch: 33.3%
+[2025-08-20 12:34:28,911] INFO - processing batch 71 out of 74
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+[2025-08-20 12:35:08,507] INFO - total generation: 39.596s
+[2025-08-20 12:35:08,507] INFO - generation rate: 1.36 prompts/sec
+[2025-08-20 12:35:08,509] INFO - total time: 0.66 minutes
+[2025-08-20 12:35:08,509] INFO - accuracy on batch: 44.4%
+[2025-08-20 12:35:08,509] INFO - processing batch 72 out of 74
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+[2025-08-20 12:35:46,502] INFO - total generation: 37.993s
+[2025-08-20 12:35:46,502] INFO - generation rate: 1.42 prompts/sec
+[2025-08-20 12:35:46,505] INFO - total time: 0.63 minutes
+[2025-08-20 12:35:46,505] INFO - accuracy on batch: 61.1%
+[2025-08-20 12:35:46,505] INFO - processing batch 73 out of 74
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+[2025-08-20 12:36:25,974] INFO - total generation: 39.468s
+[2025-08-20 12:36:25,974] INFO - generation rate: 1.37 prompts/sec
+[2025-08-20 12:36:25,976] INFO - total time: 0.66 minutes
+[2025-08-20 12:36:25,976] INFO - accuracy on batch: 44.4%
+[2025-08-20 12:36:25,977] INFO - processing batch 74 out of 74
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+[2025-08-20 12:36:51,726] INFO - total generation: 25.750s
+[2025-08-20 12:36:51,727] INFO - generation rate: 0.58 prompts/sec
+[2025-08-20 12:36:51,727] INFO - total time: 0.43 minutes
+[2025-08-20 12:36:51,727] INFO - accuracy on batch: 40.0%
+[2025-08-20 12:36:51,728] INFO - evaluation complete. Correct answers: 548 - Accuracy: 0.415
