@@ -23,27 +23,22 @@ def extract_final_answer(sol: str) -> str:
     else:
         tail = m.group(1).strip()
 
-    # Optionally sanitize the numeric (keep original tail if you prefer)
     num_m = NUM_TOKEN_RE.search(tail)
-    return num_m.group(0).replace(",", "") if num_m else tail  # strip commas if present
+    return num_m.group(0).replace(",", "") if num_m else tail 
 
 def to_template(example):
     q = normalize_text(example["question"])
     sol = normalize_text(example["answer"])
 
     try:
-        n = extract_final_answer(sol)  # "10", "3.5", "1/2", etc.
+        n = extract_final_answer(sol)
     except Exception as e:
-        # Propagate enough info to debug the offending row
         raise AssertionError(f"No final #### number found.\nQUESTION:\n{q}\nANSWER_RAW:\n{sol}\nERROR:{e}")
 
-    # Remove the last '#### ...' line from the rationale body if present
-    # Safer approach: splitlines and drop the line that STARTS with '####'
     lines = [ln for ln in sol.split("\n")]
     if lines and lines[-1].lstrip().startswith("####"):
         rationale = "\n".join(lines[:-1]).strip()
     else:
-        # If it's embedded, just remove the substring '#### <tail>' once from the end
         rationale = re.sub(r"####\s*"+re.escape(n)+r"\s*$", "", sol, flags=re.S).strip()
 
     assistant_target = f"{rationale}\n<answer>{n}</answer>"
@@ -53,6 +48,38 @@ def to_template(example):
         "assistant_target": assistant_target,
         "final_answer": n,
     }
+
+PROBLEM_RE = re.compile(r"<problem>\s*(.*?)\s*</problem>", re.S)
+ANSWER_RE  = re.compile(r"<answer>\s*(.*?)\s*</answer>", re.S)
+
+def _between(text, pat, default=""):
+    m = pat.search(text or "")
+    return m.group(1).strip() if m else default
+
+def _norm_num(s: str) -> str:
+    s = (s or "").strip()
+    s = s.replace(",", "")          # drop thousands separators
+    s = s.rstrip(".")               # drop trailing dot
+    return s
+
+def to_template_trippy(example):
+
+    msgs = example["messages"]
+    user_msg = next((m["content"] for m in msgs if m.get("role") == "user"), "")
+    asst_msg = next((m["content"] for m in msgs if m.get("role") == "assistant"), "")
+
+    question = _between(user_msg, PROBLEM_RE, default=user_msg)
+    gold     = _norm_num(_between(asst_msg, ANSWER_RE, default=""))
+
+    return {
+        "question": question,
+        "assistant_target": asst_msg,
+        "gold_answer": gold,
+        "id": example.get("meta", {}).get("id", None),
+        "source": example.get("meta", {}).get("source", None),
+        "task_type": example.get("meta", {}).get("task_type", None)
+    }
+
 def to_messages(question: str, 
                 answer: str,
                 SYSTEM_PROMPT: str,
@@ -80,6 +107,6 @@ def to_wrapped_data(results: List[str],
     """Take the best trip_before, answer, end for a given answer and wrap the new dataset."""                    
     return [{"messages": [{"role": "user", "content": f"<problem>\n{ex['question']}\n</problem>"},
                     {"role": "assistant", "content": (f"<trip_before>{r[0]}</trip_before>\n"f"<answer>{r[1]}</answer>\n"f"<end>{r[2]}</end>")}],
-                    "meta": {"source": dataset_name, "id": ex["uid"], "task_type": ex["task_type"]}}
+                    "meta": {"source": dataset_name, "id": ex["id"], "task_type": ex["task_type"]}}
                     for r, ex in zip(results, current_batch) if r is not None]
     
