@@ -14,15 +14,15 @@ fi
 huggingface-cli login --token "$HUGGING_FACE_HUB_TOKEN"
 
 ## set GPU
-GPU="${GPU:-2}"
+GPU="${GPU:-3}"
 export CUDA_VISIBLE_DEVICES="$GPU"
 
 ## set parameters for the Python script
 MODEL_NAME="${MODEL_NAME:-Qwen/Qwen2.5-7B-Instruct}"
 DATASET_NAME="${DATASET_NAME:-gsm8k}"
 TEACHER_NAME="${TEACHER_NAME:-meta-llama/Meta-Llama-3.2-3B-Instruct}"
-MODE="${MODE:-default}"
-NOTE="${NOTE:-22-august}"
+MODE="${MODE:-trippy}"
+NOTE="${NOTE:-22-august-epoch-3}"
 
 FINETUNING="${FINETUNING:-True}"       # run training step
 TESTING="${TESTING:-False}"            # run eval on test set
@@ -30,7 +30,7 @@ INFERENCE="${INFERENCE:-False}"        # (present in parser; not used in main ye
 
 # optional training hyperparams
 SEQ_LENGTH="${SEQ_LENGTH:-1024}"
-EPOCHS="${EPOCHS:-1}"
+EPOCHS="${EPOCHS:-3}"
 LR="${LR:-2e-4}"
 PER_DEVICE_BS="${PER_DEVICE_BS:-1}"
 GRAD_ACCUM="${GRAD_ACCUM:-32}"
@@ -71,10 +71,10 @@ ARGS=(
   --n "$N_VOTES"
 )
 
-[[ "$FINETUNING" == "False" ]] && ARGS+=(--finetuning)
-[[ "$TESTING" == "True" ]] && ARGS+=(--testing)
+[[ "$FINETUNING" == "True" ]] && ARGS+=(--finetuning)
+[[ "$TESTING" == "False" ]] && ARGS+=(--testing)
 [[ "$INFERENCE" == "False" ]] && ARGS+=(--inference)
-[[ "$LOAD_ADAPTER" == "True" ]] && ARGS+=(--load_adapter)
+[[ "$LOAD_ADAPTER" == "False" ]] && ARGS+=(--load_adapter)
 
 # make logs and run python script
 LOG_DIR="../logs"

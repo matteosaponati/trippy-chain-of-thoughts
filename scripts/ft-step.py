@@ -3,8 +3,8 @@ import argparse
 from datasets import load_dataset
 
 from src.TrainerTrippyModel import TrainerTrippyModel
-from src.adapters import iter_gsm8k
-from src.chat_utils import to_template
+from src.adapters import iter_gsm8k, iter_trippy
+from src.chat_utils import to_template, to_template_trippy
 
 import logging
 logger = logging.getLogger(__name__)
@@ -68,16 +68,21 @@ def main():
         train_set, val_set = split["train"], split["test"]
         train_set = train_set.map(to_template, remove_columns = train_set.column_names)
         val_set = val_set.map(to_template, remove_columns = val_set.column_names)
-        logger.info(f"DEBUG: train set example: \n {train_set[0]}")
         test_set = list(iter_gsm8k(split = "test"))
 
     else:
-        train_file = f"/datasets/teacher-{args.teacher_name.split("/")[1]}/{args.dataset_name}-{args.mode}-train"
-        test_file = f"/datasets/teacher-{args.teacher_name.split("/")[1]}/{args.dataset_name}-{args.mode}-test"
-        ds = load_dataset("json", data_files={"train": train_file, "test": test_file})
-        split = ds["train"].train_test_split(test_size = 0.1, seed = 42)
-        train_set, val_set = split["train"], split["test"]
-        test_set = load_dataset("json", test_file) ## CHECK THIS
+        train_file = f"../datasets/teacher-{args.teacher_name.split('/')[1]}/{args.dataset_name}-{args.mode}-train.json"
+        test_file  = f"../datasets/teacher-{args.teacher_name.split('/')[1]}/{args.dataset_name}-{args.mode}-test.json"
+        raw_train = load_dataset("json", data_files = {"train": train_file})["train"]
+        split = raw_train.train_test_split(test_size = 0.1, seed = 42)
+        train_set_raw, val_set_raw = split["train"], split["test"]
+        raw_test  = load_dataset("json", data_files = {"test": test_file})["test"]
+        train_set = train_set_raw.map(to_template_trippy, remove_columns = train_set_raw.column_names)
+        val_set   = val_set_raw.map(to_template_trippy, remove_columns = val_set_raw.column_names)
+        test_set  = raw_test.map(to_template_trippy, remove_columns = raw_test.column_names)
+        logger.info(f"DEBUG: train set example: \n {train_set[0]}")
+        logger.info(f"DEBUG: val set example: \n {val_set[0]}")
+        logger.info(f"DEBUG: test set example: \n {test_set[0]}")
 
     ## get trainer with model and tokenizer
     trainer = TrainerTrippyModel(
