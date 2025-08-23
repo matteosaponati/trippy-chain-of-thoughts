@@ -164,7 +164,6 @@ class TrainerTrippyModel:
     def _formatting_func(self, example):
         q = example["question"]
         t = example.get("assistant_target", "") 
-        a = example.get("gold_answer", "")
 
         if self.finetuning == True:
             msgs = [{"role": "system", "content": self.SYSTEM_PROMPT},
@@ -258,7 +257,8 @@ class TrainerTrippyModel:
                 ## get the current dataset batch
                 b_start_time = time.time()
                 b_end = min(b_start + batch_size, len(dataset))
-                current_batch = dataset[b_start: b_end]
+                current_batch = dataset.select(range(b_start, b_end)) 
+                # current_batch = dataset[b_start: b_end]
 
                 ## get prompts for majority voting
                 prompts = [self._formatting_func(ex) for ex in current_batch]
@@ -294,8 +294,6 @@ class TrainerTrippyModel:
                     pred_answer, pred_text = self._majority_vote(texts)
 
                     exact = False
-                    if (pred_answer and pred_text):
-                        texts = ""
                     if (pred_answer and is_correct(pred_answer, ex["gold_answer"])):
                         correct_batch += 1
                         correct += 1
@@ -306,7 +304,8 @@ class TrainerTrippyModel:
                         "predicted_answer": pred_answer,
                         "gold_answer": ex["gold_answer"],
                         "exact_match": exact,
-                        "texts_no_parsing": texts}
+                        "id": ex["id"], ## WHY THIS DOES NOT WORK?
+                        "tasK_type": ex["task_type"]}
                     f.write(json.dumps(result, ensure_ascii=False) + "\n")
                     logger.info(f"DEBUG: final results \n {result}") ##DEBUG: REMOVE THIS LATER
 
