@@ -14,19 +14,19 @@ fi
 huggingface-cli login --token "$HUGGING_FACE_HUB_TOKEN"
 
 ## set GPU
-GPU="${GPU:-1}"                                    
+GPU="${GPU:-2}"                                    
 export CUDA_VISIBLE_DEVICES="$GPU"
-## set paraameters
-# MODEL="${MODEL:-Qwen/Qwen2.5-7B}"                  
-MODEL="${MODEL:-meta-llama/Llama-3.2-3B-Instruct}"                  
-MODE="${MODE:-evaluate}"                  
-ARGS=(--model "$MODEL" --mode "$MODE")
+## set paraameters            
+MODEL="${MODEL:-Qwen/Qwen2.5-7B-Instruct}"                  
+MODE="${MODE:-trippy}"      
+SPLIT="${SPLIT:-test}"                  
+ARGS=(--model "$MODEL" --mode "$MODE" --split "$SPLIT")
 
 # make logs and run python script
 LOG_DIR="../logs"
 mkdir -p "$LOG_DIR"
 
-SCRIPT="teacher.py"   
+SCRIPT="data-generation.py"   
 
 TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
 LOG_FILE="$LOG_DIR/generate_log_${TIMESTAMP}.out"
