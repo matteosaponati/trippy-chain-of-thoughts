@@ -14,7 +14,7 @@ def parse_args():
     ap = argparse.ArgumentParser()
 
     ## general
-    ap.add_argument("--note", type = str, default = "new-test")
+    ap.add_argument("--note", type = str, default = "")
     ap.add_argument("--finetuning", action='store_true')
     ap.add_argument("--testing", action='store_false')  
     ap.add_argument("--inference", action='store_false')
@@ -65,24 +65,21 @@ def main():
     if args.mode == 'default':
         ds = load_dataset("gsm8k", "main")
         split = ds["train"].train_test_split(test_size = 0.1, seed = 42)
-        train_set, val_set = split["train"], split["test"]
-        train_set = train_set.map(to_template, remove_columns = train_set.column_names)
-        val_set = val_set.map(to_template, remove_columns = val_set.column_names)
-        test_set = list(iter_gsm8k(split = "test"))
+        ds_train, ds_val = split["train"], split["test"]
+        ds_train = ds_train.map(to_template, remove_columns = ds_train.column_names)
+        ds_val = ds_val.map(to_template, remove_columns = ds_val.column_names)
+        ds_test = ds["test"].map(to_template, remove_columns = ds["test"].column_names)
 
     else:
-        train_file = f"../datasets/teacher-{args.teacher_name.split('/')[1]}/{args.dataset_name}-{args.mode}-train.json"
-        test_file  = f"../datasets/teacher-{args.teacher_name.split('/')[1]}/{args.dataset_name}-{args.mode}-test.json"
-        raw_train = load_dataset("json", data_files = {"train": train_file})["train"]
+        ds_train = f"../datasets/teacher-{args.teacher_name.split('/')[1]}/{args.dataset_name}_{args.mode}_train.json"
+        ds_test  = f"../datasets/teacher-{args.teacher_name.split('/')[1]}/{args.dataset_name}_{args.mode}_test.json"
+        raw_train = load_dataset("json", data_files = {"train": ds_train})["train"]
         split = raw_train.train_test_split(test_size = 0.1, seed = 42)
-        train_set_raw, val_set_raw = split["train"], split["test"]
-        raw_test  = load_dataset("json", data_files = {"test": test_file})["test"]
-        train_set = train_set_raw.map(to_template_trippy, remove_columns = train_set_raw.column_names)
-        val_set   = val_set_raw.map(to_template_trippy, remove_columns = val_set_raw.column_names)
-        test_set  = raw_test.map(to_template_trippy, remove_columns = raw_test.column_names)
-        logger.info(f"DEBUG: train set example: \n {train_set[0]}")
-        logger.info(f"DEBUG: val set example: \n {val_set[0]}")
-        logger.info(f"DEBUG: test set example: \n {test_set[0]}")
+        ds_train, ds_val = split["train"], split["test"]
+        ds_test  = load_dataset("json", data_files = {"test": ds_test})["test"]
+        ds_train = ds_train.map(to_template_trippy, remove_columns = ds_train.column_names)
+        ds_val   = ds_val.map(to_template_trippy, remove_columns = ds_val.column_names)
+        ds_test  = ds_test.map(to_template_trippy, remove_columns = ds_test.column_names)
 
     ## get trainer with model and tokenizer
     trainer = TrainerTrippyModel(
@@ -113,11 +110,16 @@ def main():
     
     ## fine tuning
     if args.finetuning:
-        trainer.run(train_set = train_set, validation_set = val_set)
+        trainer.run(train_set = ds_train, validation_set = ds_val)
 
     ## testing
     if args.testing:
-        trainer.test(dataset = test_set, batch_size = args.batch_size)
+        trainer.test(dataset = ds_test, batch_size = args.batch_size)
+
+    if args.inference:
+        input_prompt = """
+        """
+        trainer.infer(text = input_prompt)
     
 if __name__ == "__main__":
     main()
