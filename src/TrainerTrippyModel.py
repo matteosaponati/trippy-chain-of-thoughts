@@ -21,13 +21,13 @@ class TrainerTrippyModel:
             finetuning: bool = True,
             testing: bool = False,
             inference: bool = False,
-            model_name: str = "meta-llama/Meta-Llama-3-8B-Instruct",   ## the checkpoint used as teaching model
-            dataset_name: str = "gsm8k",                               ## the dataset 
+            model_name: str = "meta-llama/Meta-Llama-3-8B-Instruct",   
+            dataset_name: str = "gsm8k",                               
             mode: str = 'trippy',
             output_dir: str = "",
             SPECIAL_TOKENS: list = [],
-            seq_length: int = 1536,                                    ## the maximum sequence length of the model
-            epochs: int = 1,                                           ## number of epochs
+            seq_length: int = 1536,                                    
+            epochs: int = 1,                                           
             lr: float = 2e-4,
             per_device_bs: int = 1,
             grad_accum: int = 32,
@@ -63,6 +63,13 @@ class TrainerTrippyModel:
         os.makedirs(self.output_dir_fine_tuning, exist_ok = True)
         os.makedirs(self.output_dir_test, exist_ok = True)
 
+        if self.finetuning == True:
+            self.padding_side = "right"
+        elif self.testing == True:
+            self.padding_side = "left"
+        elif self.inference == True:
+            self.padding_side = "left"
+
         ## set arguments for text generation
         self.gen_kwargs = dict(
             do_sample = do_sample,
@@ -89,7 +96,8 @@ class TrainerTrippyModel:
             self.tokenizer = AutoTokenizer.from_pretrained(
                 base_for_tokenizer,
                 use_fast=True,
-                trust_remote_code=False)
+                trust_remote_code = False,
+                padding_side = self.padding_side)
             if self.tokenizer.pad_token is None:
                 self.tokenizer.pad_token = self.tokenizer.eos_token
 
@@ -112,7 +120,8 @@ class TrainerTrippyModel:
             self.tokenizer = AutoTokenizer.from_pretrained(
                 base_for_tokenizer,
                 use_fast=True,
-                trust_remote_code=False)
+                trust_remote_code = False,
+                padding_side = self.padding_side)
             if self.tokenizer.pad_token is None:
                 self.tokenizer.pad_token = self.tokenizer.eos_token
 
@@ -124,8 +133,7 @@ class TrainerTrippyModel:
             self.model.config.pad_token_id = self.tokenizer.pad_token_id
 
         ## set mode 
-        if self.mode == 'boring': from src.prompts.prompts_boring import SYSTEM_PROMPT, USER_TEMPLATE
-        elif self.mode == 'trippy': from src.prompts.prompts_trippy import SYSTEM_PROMPT, USER_TEMPLATE
+        if self.mode == 'trippy': from src.prompts.prompts_trippy import SYSTEM_PROMPT, USER_TEMPLATE
         elif self.mode == 'default': from src.prompts.prompts_default import SYSTEM_PROMPT, USER_TEMPLATE
         self.SYSTEM_PROMPT = SYSTEM_PROMPT
         self.USER_TEMPLATE = USER_TEMPLATE
@@ -138,7 +146,7 @@ class TrainerTrippyModel:
                         lora_dropout,
                         bias = "none", 
                         task_type = "CAUSAL_LM",
-                        target_modules = ["q_proj", "k_proj", "v_proj", "o_proj"])
+                        target_modules = ["q_proj", "k_proj", "v_proj", "o_proj", "up_proj", "down_proj"])
 
         ## set supervised finetuning config
         logger.info(f"configuring SFT training with {model_name}")
@@ -163,7 +171,7 @@ class TrainerTrippyModel:
     
     def _formatting_func(self, example):
         q = example["question"]
-        t = example.get("assistant_target", "") 
+        t = example["assistant_target"]
 
         if self.finetuning == True:
             msgs = [{"role": "system", "content": self.SYSTEM_PROMPT},
@@ -171,7 +179,7 @@ class TrainerTrippyModel:
                 {"role": "assistant", "content": t}]
             chat = self.tokenizer.apply_chat_template(msgs, tokenize = False,
                                                     add_generation_prompt = False)
-        if self.testing == True:
+        elif self.testing == True:
             msgs = [{"role":"system", "content": self.SYSTEM_PROMPT},
                 {"role":"user", "content": self.USER_TEMPLATE.format(question = q)}]
             chat = self.tokenizer.apply_chat_template(msgs, tokenize = False,
@@ -246,6 +254,7 @@ class TrainerTrippyModel:
         logger.info(f"evaluating {self.model_name} on {self.dataset_name} - # problems: {len(dataset)}")
         self.model.eval()
         correct = 0
+        id_count = 0
         b_range = range(0, len(dataset), batch_size)
 
         with open(self.output_dir_test + f'/test_results_sft_{self.load_adapter}', "w", encoding="utf-8") as f:
@@ -257,9 +266,8 @@ class TrainerTrippyModel:
                 ## get the current dataset batch
                 b_start_time = time.time()
                 b_end = min(b_start + batch_size, len(dataset))
-                current_batch = dataset.select(range(b_start, b_end)) 
-                # current_batch = dataset[b_start: b_end]
 
+                current_batch = dataset.select(range(b_start, b_end)) 
                 ## get prompts for majority voting
                 prompts = [self._formatting_func(ex) for ex in current_batch]
                 prompts = [prompt for prompt in prompts for _ in range(self.n)]
@@ -288,26 +296,27 @@ class TrainerTrippyModel:
                 correct_batch = 0
                 generated_tokens = outputs[:, inputs['input_ids'].shape[-1]:]
                 for j, ex in enumerate(current_batch):
+                    id_count += 1
                     question_tokens = generated_tokens[j * self.n: (j * self.n) + self.n]
                     question_texts = self.tokenizer.batch_decode(question_tokens, skip_special_tokens = True)
                     texts = [text.strip() for text in question_texts]
                     pred_answer, pred_text = self._majority_vote(texts)
 
                     exact = False
-                    if (pred_answer and is_correct(pred_answer, ex["gold_answer"])):
+                    if (pred_answer and is_correct(pred_answer, ex["golden_answer"])):
                         correct_batch += 1
                         correct += 1
                         exact = True
 
-                    result = {"question": ex.get("question", ""),
-                        "prediction_text": pred_text,
-                        "predicted_answer": pred_answer,
-                        "gold_answer": ex["gold_answer"],
-                        "exact_match": exact,
-                        "id": ex["id"], ## WHY THIS DOES NOT WORK?
-                        "tasK_type": ex["task_type"]}
+                    result = {
+                        "id": id_count,
+                        "split": "test",
+                        "question": ex.get("question", ""),
+                        "golden_answer": ex["golden_answer"],
+                        "assistant_answer": pred_text,
+                        "answer": pred_answer,
+                        "exact_match": exact}
                     f.write(json.dumps(result, ensure_ascii=False) + "\n")
-                    logger.info(f"DEBUG: final results \n {result}") ##DEBUG: REMOVE THIS LATER
 
                 del inputs, outputs, generated_tokens
 
@@ -318,3 +327,41 @@ class TrainerTrippyModel:
         accuracy = correct / len(dataset)
         logger.info(f"evaluation complete. Correct answers: {correct} - Accuracy: {accuracy:.3f}")
         logger.info(f"inference results saved to: {self.output_dir_test}")
+
+    @torch.inference_mode()
+    def infer(self,
+              text: str):
+
+        self.model.eval()
+
+        ## get the prompt and tokenize
+        inputs = self.tokenizer(
+            [text],
+            return_tensors = "pt",
+            padding = True,
+            truncation = True,
+            max_length = self.seq_length)
+        input_ids = inputs["input_ids"].to(self.model.device)
+        attention_mask = inputs.get("attention_mask", None)
+        if attention_mask is not None:
+            attention_mask = attention_mask.to(self.model.device)
+
+        # generate the output and decode only new generated tokens
+        outputs = self.model.generate(
+            input_ids=input_ids,
+            attention_mask=attention_mask,
+            pad_token_id=self.tokenizer.pad_token_id,
+            eos_token_id=self.tokenizer.eos_token_id,
+            **self.gen_kwargs)
+        gen_tokens = outputs[:, input_ids.shape[-1]:]
+        output = self.tokenizer.batch_decode(gen_tokens, skip_special_tokens = True)
+
+        print("trippy chain-of-thoughts math solver (supposedly)")
+        print("="*80)
+        print(f"prompt: {text}")
+        print("\n" + "-"*80)
+        print("response:")
+        print("-"*80)
+        print(output)
+        
+        return
